@@ -7,7 +7,6 @@ import sudoku.backtrack.containers.BacktrackContainersDto;
 public class SavedGame {
     private BacktrackBoard backtrackBoard;
     private BacktrackContainersDto backtrackContainersDto;
-    private int counter = 0;
 
     public SavedGame(BacktrackBoard backtrackBoard, BacktrackContainersDto backtrackContainersDto) {
         this.backtrackBoard = backtrackBoard;
@@ -20,13 +19,5 @@ public class SavedGame {
 
     public BacktrackContainersDto getBacktrackContainersDto() {
         return backtrackContainersDto;
-    }
-
-    public int getCounter() {
-        return counter;
-    }
-
-    public void addCounter(){
-        counter++;
     }
 }

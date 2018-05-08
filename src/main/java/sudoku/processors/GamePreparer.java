@@ -21,6 +21,7 @@ public class GamePreparer {
     public void prepareGame() {
         System.out.println("Please type column(x) and row(y) number you'd like to insert number into, separated by commas:");
         System.out.println("If you wish to delete value from certain coordinates please type those and as a value: 0.");
+        System.out.println("If you wish to solve the sudoku please type: solve.");
         playerSettingUpCoords = new Scanner(System.in).nextLine();
 
         if (!playerSettingUpCoords.toLowerCase().equals("solve")){

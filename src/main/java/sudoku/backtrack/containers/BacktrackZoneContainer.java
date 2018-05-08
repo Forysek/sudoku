@@ -27,6 +27,7 @@ public class BacktrackZoneContainer {
                 }
                 deepClonedZones.add(deepClonedAvailableInZones);
             } else {
+                deepClonedZones.add(deepClonedAvailableInZones);
                 continue;
             }
         }

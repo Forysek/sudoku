@@ -23,11 +23,15 @@ public class BacktrackBoard {
                 deepClonedSudokuElement.setZone(deepClonedZone);
                 int deepClonedValue = sudokuBoard.getBoard().get(y).getElements().get(x).getValue();
                 deepClonedSudokuElement.setValue(deepClonedValue);
+                int deepClonedPosX = sudokuBoard.getBoard().get(y).getElements().get(x).getPositionX();
+                deepClonedSudokuElement.setPositionX(deepClonedPosX);
+                int deepClonedPosY = sudokuBoard.getBoard().get(y).getElements().get(x).getPositionY();
+                deepClonedSudokuElement.setPositionY(deepClonedPosY);
                 deepClonedSudokuRow.getElements().add(deepClonedSudokuElement);
+
             }
         }
     }
-
     public List<SudokuRow> getClonedBoard() {
         return clonedBoard;
     }

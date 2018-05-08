@@ -27,9 +27,9 @@ public class BacktrackRowContainer {
                 }
                 deepClonedRows.add(deepClonedAvailableInRows);
             } else {
+                deepClonedRows.add(deepClonedAvailableInRows);
                 continue;
             }
         }
     }
 }
-

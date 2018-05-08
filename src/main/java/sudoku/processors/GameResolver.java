@@ -37,28 +37,20 @@ public class GameResolver {
     public void solveSudoku() {
         updateBoard();
         do {
-            if(isSudokuPossibleToSolve()) {
-//                int counter = 0;
-                do {
-                    checkBoardForSingleAvailableValues();
-//                    counter ++;
-//                    if (counter > 80){
-//                        outcome = false;
-//                    }
-                } while (outcome);
+            if(isSudokuIsPossibleToSolve()) {
+                System.out.println(numbersValidator.getSudokuBoard());
+//                do {
+//                    checkBoardForSingleAvailableValues();
+//                    updateBoard();
+//                } while (outcome);
+                if (isSudokuFinished(numbersValidator.getSudokuBoard())){
+                    break;
+                }
+                checkBoardElementsForMoreAvailableValues();
                 updateBoard();
-                SudokuElement sudokuElement = checkBoardElementsForMoreAvailableValues();
-                int posX = sudokuElement.getPositionX();
-                int posY = sudokuElement.getPositionY();
-                int zone = sudokuElement.getZone();
-                Integer valueToInsert = sudokuElement.getAvailableForPosition().get(0);
-                sudokuElement.setValue(valueToInsert);
-                sudokuElement.getAvailableForPosition().clear();
-                numbersContainerProcessor.removeFromAvailableNumbers(posX + 1, posY + 1, zone, valueToInsert);
-                createSnapshotOfBoard();
             } else {
                 loadGame();
-                checkBoardForSingleAvailableValues();
+                updateBoard();
             }
         } while (!isSudokuFinished(numbersValidator.getSudokuBoard()));
     }
@@ -113,31 +105,48 @@ public class GameResolver {
                 .flatMap(row -> row.getElements().stream())
                 .filter(f -> f.getAvailableForPosition().size() == 1)
                 .collect(Collectors.toList());
-        if (!sudokuWithOneAvailableValueList.isEmpty()) {
-            SudokuElement sudokuElement = sudokuWithOneAvailableValueList.get(0);
-            int zone = sudokuElement.getZone() - 1;
-            int posX = sudokuElement.getPositionX();
-            int posY = sudokuElement.getPositionY();
-            int valueToInsert = sudokuElement.getAvailableForPosition().get(0);
+        boolean isReadyToExit;
+        int listIndex = 0;
+        do {
+            if (sudokuWithOneAvailableValueList.size() > 0 && sudokuWithOneAvailableValueList.size() >= listIndex) {
+                SudokuElement sudokuElement = sudokuWithOneAvailableValueList.get(0);
+                for(SudokuElement element: sudokuWithOneAvailableValueList) {
+                    System.out.println(element.getValue());
+                    System.out.println(element.getPositionX());
+                    System.out.println(element.getPositionY());
+                    System.out.println(element.getAvailableForPosition().size());
+                    System.out.println(element.getAvailableForPosition().get(0));
+                    System.out.println("-----");
+                }
 
-            boolean isNumberValid = numbersValidator.coordsValidator(posX + 1, posY + 1, valueToInsert);
-            if (isNumberValid) {
-                sudokuElement.setValue(valueToInsert);
-                sudokuElement.getAvailableForPosition().clear();
-                numbersContainerProcessor.removeFromAvailableNumbers(posX + 1, posY + 1, zone + 1, valueToInsert);
-                updateCoordsAvailableValues(posX, posY, zone);
-                outcome = false;
+                int zone = sudokuElement.getZone() - 1;
+                int posX = sudokuElement.getPositionX();
+                int posY = sudokuElement.getPositionY();
+                int valueToInsert = sudokuElement.getAvailableForPosition().get(listIndex);
+
+                boolean isNumberValid = numbersValidator.coordsValidator(posX + 1, posY + 1, valueToInsert);
+                if (isNumberValid) {
+                    sudokuElement.setValue(valueToInsert);
+                    sudokuElement.getAvailableForPosition().clear();
+                    numbersContainerProcessor.removeFromAvailableNumbers(posX + 1, posY + 1, zone + 1, valueToInsert);
+                    outcome = true;
+                    isReadyToExit = true;
+                } else {
+                    listIndex++;
+                    outcome = false;
+                    isReadyToExit = false;
+                }
             } else {
-                outcome = true;
+                outcome = false;
+                isReadyToExit = true;
             }
-        }
+        } while (!isReadyToExit);
     }
 
-    private SudokuElement checkBoardElementsForMoreAvailableValues() {
+    private void checkBoardElementsForMoreAvailableValues() {
         Integer smallestListOfAvailableInPosition = numbersValidator.getSudokuBoard().getBoard().stream()
                 .flatMap(row -> row.getElements().stream())
                 .filter(f -> f.getAvailableForPosition().size() > 0)
-                .filter(f -> f.getValue() == EMPTY_VALUE)
                 .mapToInt(m -> m.getAvailableForPosition().size())
                 .min().orElseThrow(NoSuchElementException::new);
 
@@ -145,12 +154,27 @@ public class GameResolver {
                 .flatMap(row -> row.getElements().stream())
                 .filter(f -> f.getAvailableForPosition().size() == smallestListOfAvailableInPosition)
                 .collect(Collectors.toList());
-        SudokuElement sudokuElement = elementWithSmallestAvailableList.get(0);
 
-        return sudokuElement;
+        int listIndex = 0;
+        SudokuElement sudokuElement = elementWithSmallestAvailableList.get(0);
+        int posX = sudokuElement.getPositionX();
+        int posY = sudokuElement.getPositionY();
+        int zone = sudokuElement.getZone();
+        Integer valueToInsert = sudokuElement.getAvailableForPosition().get(listIndex);
+
+        boolean isNumberValid = numbersValidator.coordsValidator(posX + 1, posY + 1, valueToInsert);
+        if (!isNumberValid) {
+            listIndex++;
+            sudokuElement = elementWithSmallestAvailableList.get(listIndex);
+        }
+
+        sudokuElement.setValue(valueToInsert);
+        createSnapshotOfBoard();
+        numbersContainerProcessor.removeFromAvailableNumbers(posX + 1, posY + 1, zone, valueToInsert);
+        sudokuElement.getAvailableForPosition().clear();
     }
 
-    private boolean isSudokuPossibleToSolve() {
+    private boolean isSudokuIsPossibleToSolve() {
         List<SudokuElement> invalidElementsList = numbersValidator.getSudokuBoard().getBoard().stream()
                 .flatMap(row -> row.getElements().stream())
                 .filter(f -> (f.getAvailableForPosition().size() == 0) && (f.getValue() == EMPTY_VALUE))

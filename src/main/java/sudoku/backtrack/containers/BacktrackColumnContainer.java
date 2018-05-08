@@ -27,6 +27,7 @@ public class BacktrackColumnContainer {
                 }
                 deepClonedColumns.add(deepClonedAvailableInColumns);
             } else {
+                deepClonedColumns.add(deepClonedAvailableInColumns);
                 continue;
             }
         }
