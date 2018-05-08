@@ -35,6 +35,10 @@ public class SudokuElement {
         this.positionY = positionY;
     }
 
+    public void setAvailableForPosition(List<Integer> availableForPosition) {
+        this.availableForPosition = availableForPosition;
+    }
+
     public List<Integer> getAvailableForPosition() {
         return availableForPosition;
     }

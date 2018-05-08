@@ -1,10 +1,6 @@
 package sudoku;
 
 import sudoku.board.SudokuBoard;
-import sudoku.containers.ColumnContainer;
-import sudoku.containers.NumbersContainerProcessor;
-import sudoku.containers.RowContainer;
-import sudoku.containers.ZoneContainer;
 import sudoku.processors.GamePreparer;
 import sudoku.processors.GameResolver;
 import sudoku.processors.NumbersValidator;
@@ -22,17 +18,13 @@ public class SudokuGame {
 
         while (!isGameFinished) {
             SudokuBoard sudokuBoard = new SudokuBoard();
-            ColumnContainer columnContainer = new ColumnContainer();
-            RowContainer rowContainer = new RowContainer();
-            ZoneContainer zoneContainer = new ZoneContainer();
-            NumbersContainerProcessor numbersContainerProcessor = new NumbersContainerProcessor(rowContainer, columnContainer, zoneContainer);
             NumbersValidator numbersValidator = new NumbersValidator(sudokuBoard);
-            GameResolver gameResolver = new GameResolver(numbersValidator, numbersContainerProcessor);
+            GameResolver gameResolver = new GameResolver(numbersValidator);
 
             System.out.println("Empty board looks like this: \n");
             System.out.println(sudokuBoard);
 
-            GamePreparer gamePreparer = new GamePreparer(numbersValidator, numbersContainerProcessor);
+            GamePreparer gamePreparer = new GamePreparer(numbersValidator);
 
             do {
                 gamePreparer.prepareGame();

@@ -38,6 +38,7 @@ public class SudokuBoard {
             }
         }
         fillSudokuElementCoords();
+        fillSudokuElementAvailableForPosition();
     }
 
     public List<SudokuRow> getBoard() {
@@ -78,6 +79,18 @@ public class SudokuBoard {
             for (int x = MIN_INDEX; x < MAX_INDEX; x++) {
                 board.get(y).getElements().get(x).setPositionX(x);
                 board.get(y).getElements().get(x).setPositionY(y);
+            }
+        }
+    }
+
+    private void fillSudokuElementAvailableForPosition() {
+        for (int y = MIN_INDEX; y < MAX_INDEX; y++) {
+            SudokuRow sudokuRow = board.get(y);
+            for (int x = MIN_INDEX; x < MAX_INDEX; x++) {
+                SudokuElement sudokuElement =  sudokuRow.getElements().get(x);
+                for (int i = 1; i < 10; i++){
+                    sudokuElement.getAvailableForPosition().add(i);
+                }
             }
         }
     }

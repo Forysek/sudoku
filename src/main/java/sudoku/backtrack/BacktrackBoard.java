@@ -27,8 +27,9 @@ public class BacktrackBoard {
                 deepClonedSudokuElement.setPositionX(deepClonedPosX);
                 int deepClonedPosY = sudokuBoard.getBoard().get(y).getElements().get(x).getPositionY();
                 deepClonedSudokuElement.setPositionY(deepClonedPosY);
+                List<Integer> deepClonedAvailable = sudokuBoard.getBoard().get(y).getElements().get(x).getAvailableForPosition();
+                deepClonedSudokuElement.setAvailableForPosition(deepClonedAvailable);
                 deepClonedSudokuRow.getElements().add(deepClonedSudokuElement);
-
             }
         }
     }
