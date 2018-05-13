@@ -35,8 +35,6 @@ public class GamePreparer {
             int tempValue = playerTypedCoords.nextInt();
             SudokuElement sudokuElement =  numbersValidator.getSudokuBoard().getBoard().get(tempY - 1).getElements().get(tempX - 1);
 
-
-
             if (tempX > 0 && tempX < 10 && tempY > 0 && tempY < 10 && tempValue > 0 && tempValue < 10) {
 
                 if (numbersValidator.coordsValidator(tempX, tempY, tempValue)) {

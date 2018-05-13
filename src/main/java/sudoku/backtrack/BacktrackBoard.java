@@ -4,6 +4,7 @@ import sudoku.board.SudokuBoard;
 import sudoku.board.SudokuElement;
 import sudoku.board.SudokuRow;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,16 +20,20 @@ public class BacktrackBoard {
             clonedBoard.add(deepClonedSudokuRow);
             for (int x = MIN_INDEX; x < MAX_INDEX; x++) {
                 SudokuElement deepClonedSudokuElement = new SudokuElement();
-                int deepClonedZone = sudokuBoard.getBoard().get(y).getElements().get(x).getZone();
-                deepClonedSudokuElement.setZone(deepClonedZone);
-                int deepClonedValue = sudokuBoard.getBoard().get(y).getElements().get(x).getValue();
-                deepClonedSudokuElement.setValue(deepClonedValue);
-                int deepClonedPosX = sudokuBoard.getBoard().get(y).getElements().get(x).getPositionX();
-                deepClonedSudokuElement.setPositionX(deepClonedPosX);
-                int deepClonedPosY = sudokuBoard.getBoard().get(y).getElements().get(x).getPositionY();
-                deepClonedSudokuElement.setPositionY(deepClonedPosY);
-                List<Integer> deepClonedAvailable = sudokuBoard.getBoard().get(y).getElements().get(x).getAvailableForPosition();
-                deepClonedSudokuElement.setAvailableForPosition(deepClonedAvailable);
+                int shallowClonedZone = sudokuBoard.getBoard().get(y).getElements().get(x).getZone();
+                deepClonedSudokuElement.setZone(shallowClonedZone);
+                int shallowClonedValue = sudokuBoard.getBoard().get(y).getElements().get(x).getValue();
+                deepClonedSudokuElement.setValue(shallowClonedValue);
+                int shallowClonedPosX = sudokuBoard.getBoard().get(y).getElements().get(x).getPositionX();
+                deepClonedSudokuElement.setPositionX(shallowClonedPosX);
+                int shallowClonedPosY = sudokuBoard.getBoard().get(y).getElements().get(x).getPositionY();
+                deepClonedSudokuElement.setPositionY(shallowClonedPosY);
+                List<Integer> availableListToBeCloned = sudokuBoard.getBoard().get(y).getElements().get(x).getAvailableForPosition();
+                List<Integer> deepClonedAvailableList = new ArrayList<>();
+                for(Integer availableElements : availableListToBeCloned) {
+                    deepClonedAvailableList.add(availableElements);
+                }
+                deepClonedSudokuElement.setAvailableForPosition(deepClonedAvailableList);
                 deepClonedSudokuRow.getElements().add(deepClonedSudokuElement);
             }
         }

@@ -27,23 +27,55 @@ public class GameResolver {
         do {
             if(isSudokuPossibleToSolve()) {
                 System.out.println(numbersValidator.getSudokuBoard());
-//                do {
-//                    checkBoardForSingleAvailableValues();
-//                    updateBoard();
-//                } while (outcome);
-//                if (isSudokuFinished(numbersValidator.getSudokuBoard())){
-//                    break;
-//                }
-                checkBoardElementsForMoreAvailableValues();
-                updateBoard();
+                checkBoardElementsForAvailableValues();
             } else {
                 loadGame();
-//                updateBoard();
             }
         } while (!isSudokuFinished(numbersValidator.getSudokuBoard()));
     }
 
-    private void updateCoordsAvailableValues(int x, int y, int zone, Integer value) {
+    private void checkBoardElementsForAvailableValues() {
+        Integer smallestListOfAvailableInPosition = numbersValidator.getSudokuBoard().getBoard().stream()
+                .flatMap(row -> row.getElements().stream())
+                .filter((f -> f.getValue() == EMPTY_VALUE))
+                .filter(f -> f.getAvailableForPosition().size() > 0)
+                .mapToInt(m -> m.getAvailableForPosition().size())
+                .min().orElseThrow(NoSuchElementException::new);
+
+        List<SudokuElement> elementWithSmallestAvailableList = numbersValidator.getSudokuBoard().getBoard().stream()
+                .flatMap(row -> row.getElements().stream())
+                .filter(f -> f.getAvailableForPosition().size() == smallestListOfAvailableInPosition)
+                .collect(Collectors.toList());
+
+        boolean isValid = false;
+        SudokuElement sudokuElement;
+        int listIndex = 0;
+        Integer valueToInsert;
+        int posX;
+        int posY;
+        int zone;
+
+        do {
+            sudokuElement = elementWithSmallestAvailableList.get(0);
+            posX = sudokuElement.getPositionX();
+            posY = sudokuElement.getPositionY();
+            zone = sudokuElement.getZone();
+            valueToInsert = sudokuElement.getAvailableForPosition().get(listIndex);
+            isValid = numbersValidator.coordsValidator(posX + 1, posY + 1, valueToInsert);
+            listIndex++;
+        } while (!isValid && sudokuElement.getAvailableForPosition().size() > listIndex);
+        if (isValid) {
+            sudokuElement.getAvailableForPosition().remove(valueToInsert);
+            createSnapshotOfBoard();
+            sudokuElement.setValue(valueToInsert);
+            removeFromCoordsAvailableValues(posX, posY, zone, valueToInsert);
+            sudokuElement.getAvailableForPosition().clear();
+        } else {
+            loadGame();
+        }
+    }
+
+    private void removeFromCoordsAvailableValues(int x, int y, int zone, Integer value) {
         numbersValidator.getSudokuBoard().getBoard().stream()
                 .flatMap(row -> row.getElements().stream())
                 .filter(f -> f.getPositionX() == x)
@@ -77,44 +109,6 @@ public class GameResolver {
         }
     }
 
-    private void checkBoardElementsForMoreAvailableValues() {
-        Integer smallestListOfAvailableInPosition = numbersValidator.getSudokuBoard().getBoard().stream()
-                .flatMap(row -> row.getElements().stream())
-                .filter((f -> f.getValue() == EMPTY_VALUE))
-                .filter(f -> f.getAvailableForPosition().size() > 0)
-                .mapToInt(m -> m.getAvailableForPosition().size())
-                .min().orElseThrow(NoSuchElementException::new);
-
-        List<SudokuElement> elementWithSmallestAvailableList = numbersValidator.getSudokuBoard().getBoard().stream()
-                .flatMap(row -> row.getElements().stream())
-                .filter(f -> f.getAvailableForPosition().size() == smallestListOfAvailableInPosition)
-                .collect(Collectors.toList());
-
-        boolean isValid = false;
-        SudokuElement sudokuElement;
-        int listIndex = 0;
-        Integer valueToInsert;
-        int posX;
-        int posY;
-        int zone;
-
-        do {
-        sudokuElement = elementWithSmallestAvailableList.get(0);
-        posX = sudokuElement.getPositionX();
-        posY = sudokuElement.getPositionY();
-        zone = sudokuElement.getZone() - 1;
-        valueToInsert = sudokuElement.getAvailableForPosition().get(listIndex);
-        isValid = numbersValidator.coordsValidator(posX + 1, posY + 1, valueToInsert);
-        listIndex++;
-        } while (!isValid && sudokuElement.getAvailableForPosition().size() - 1 >= listIndex);
-        if (isValid) {
-            sudokuElement.setValue(valueToInsert);
-            sudokuElement.getAvailableForPosition().remove(valueToInsert);
-            updateCoordsAvailableValues(posX, posY, zone, valueToInsert);
-            createSnapshotOfBoard();
-            sudokuElement.getAvailableForPosition().clear();
-        }
-    }
 
     private boolean isSudokuPossibleToSolve() {
         List<SudokuElement> invalidElementsList = numbersValidator.getSudokuBoard().getBoard().stream()
